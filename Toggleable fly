@@ -1,0 +1,103 @@
+--------------------------------------------------------------------
+--  one‑button toggle wrapper for YOUR fly script                 --
+--------------------------------------------------------------------
+
+local player = game.Players.LocalPlayer
+
+--------------------------------------------------------------------
+--  toggle button (top‑left)                                      --
+--------------------------------------------------------------------
+local gui            = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name             = "FlyToggleGui"
+
+local btn            = Instance.new("TextButton", gui)
+btn.Position         = UDim2.new(0, 10, 0, 10)
+btn.Size             = UDim2.new(0, 90, 0, 38)
+btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
+btn.TextColor3       = Color3.fromRGB(255,255,255)
+btn.TextScaled       = true
+btn.Text             = "Fly: OFF"
+btn.ZIndex           = 8
+
+--------------------------------------------------------------------
+--  internal state                                                --
+--------------------------------------------------------------------
+local flying   = false
+local bv, bg, rsConn             -- body movers & RenderStepped link
+
+--------------------------------------------------------------------
+--  your ORIGINAL fly logic, wrapped in enable / disable          --
+--------------------------------------------------------------------
+local function enableFly()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid  = character:WaitForChild("Humanoid")
+    local rootPart  = character:WaitForChild("HumanoidRootPart")
+    local RunService = game:GetService("RunService")
+
+    -- === original setup ===
+    humanoid.PlatformStand = true
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,     false)
+    humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,  false)
+
+    bv                = Instance.new("BodyVelocity", rootPart)
+    bv.MaxForce       = Vector3.new(9e9, 9e9, 9e9)
+
+    bg                = Instance.new("BodyGyro", rootPart)
+    bg.MaxTorque      = Vector3.new(9e9, 9e9, 9e9)
+
+    local speed       = 50
+
+    rsConn = RunService.RenderStepped:Connect(function()
+        local moveDir = humanoid.MoveDirection
+        local cam     = workspace.CurrentCamera
+
+        -- Fly direction: camera lookVector scaled by joystick magnitude
+        local flyDirection = cam.CFrame.LookVector * moveDir.Magnitude
+
+        if flyDirection.Magnitude > 0 then
+            bv.Velocity = flyDirection.Unit * speed
+        else
+            bv.Velocity = Vector3.new(0, 0, 0)
+        end
+
+        bg.CFrame = cam.CFrame
+    end)
+end
+
+local function disableFly()
+    if rsConn then rsConn:Disconnect(); rsConn = nil end
+    if bv then bv:Destroy(); bv = nil end
+    if bg then bg:Destroy(); bg = nil end
+
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.PlatformStand = false
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,     true)
+            humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,  true)
+        end
+    end
+end
+
+--------------------------------------------------------------------
+--  button toggling                                               --
+--------------------------------------------------------------------
+btn.MouseButton1Click:Connect(function()
+    flying = not flying
+    btn.Text = flying and "Fly: ON" or "Fly: OFF"
+    if flying then
+        enableFly()
+    else
+        disableFly()
+    end
+end)
+
+--------------------------------------------------------------------
+--  keep state after respawn                                      --
+--------------------------------------------------------------------
+player.CharacterAdded:Connect(function()
+    if flying then
+        enableFly()
+    end
+end)
