@@ -1,0 +1,21 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local ClipOn = true
+local NoclipConnection
+
+-- Start noclip: disable collisions repeatedly
+NoclipConnection = RunService.Heartbeat:Connect(function()
+    if ClipOn then
+        for _, player in pairs(Players:GetPlayers()) do
+            local character = player.Character
+            if character then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+    end
+end)
