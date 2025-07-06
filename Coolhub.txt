@@ -69,5 +69,19 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/
    end,
 })
 
+local Toggle = Tab:CreateToggle({
+   Name = "Fly Toggle",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+			if Value then
+         -- Turn ON inf jump
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Noclip.txt"))()
+      else
+         -- Turn OFF inf jump
+         loadstring(game:HttpGet("https://pastebin.com/raw/3Ftm4QgK"))()
+      end
+   end,
+})
 
 
