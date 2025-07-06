@@ -79,7 +79,7 @@ local Toggle = Tab:CreateToggle({
          loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Noclip.txt"))()
       else
          -- Turn OFF inf jump
-         loadstring(game:HttpGet("https://pastebin.com/raw/3Ftm4QgK"))()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/NoNoClip.txt"))()
       end
    end,
 })
