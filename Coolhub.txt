@@ -76,12 +76,13 @@ local Toggle = Tab:CreateToggle({
    Callback = function(Value)
 			if Value then
          -- Turn ON inf jump
-         loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Noclip.txt"))()
+         loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Toggleablenoclip.txt"))()
+      end
+   end,
+})"))()
       else
          -- Turn OFF inf jump
          loadstring(game:HttpGet("https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/NoNoClip.txt"))()
       end
    end,
 })
-
-
