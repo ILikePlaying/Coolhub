@@ -1,47 +1,25 @@
---------------------------------------------------------------------
---  Anti‑Noclip (client‑side)                                     --
---------------------------------------------------------------------
-local Players        = game:GetService("Players")
-local player         = Players.LocalPlayer
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
 
---------------------------------------------------------------------
---  Helper: force a part to stay collidable                       --
---------------------------------------------------------------------
-local function lockCollide(part)
-	if not part:IsA("BasePart") then return end
-
-	-- Set once now
-	part.CanCollide = true
-
-	-- Keep it that way
-	part:GetPropertyChangedSignal("CanCollide"):Connect(function()
-		if not part.CanCollide then
-			part.CanCollide = true
-		end
-	end)
+-- Enable collisions on all parts to turn noclip off
+for _, part in pairs(character:GetDescendants()) do
+    if part:IsA("BasePart") then
+        part.CanCollide = true
+    end
 end
 
---------------------------------------------------------------------
---  Apply lock to an entire character model                       --
---------------------------------------------------------------------
-local function protectCharacter(char)
-	-- Existing parts
-	for _,p in ipairs(char:GetDescendants()) do
-		lockCollide(p)
-	end
+-- Reset Humanoid properties if changed by noclip
+humanoid.PlatformStand = false
+humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
+humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
 
-	-- Future parts (accessories/tools that appear later)
-	char.DescendantAdded:Connect(lockCollide)
+-- Optional: If you have any BodyVelocity or BodyGyro used for flying/noclip, destroy them
+local rootPart = character:FindFirstChild("HumanoidRootPart")
+if rootPart then
+    for _, child in pairs(rootPart:GetChildren()) do
+        if child:IsA("BodyVelocity") or child:IsA("BodyGyro") then
+            child:Destroy()
+        end
+    end
 end
-
---------------------------------------------------------------------
---  Run for current character and every respawn                   --
---------------------------------------------------------------------
-if player.Character then
-	protectCharacter(player.Character)
-end
-
-player.CharacterAdded:Connect(function(char)
-	char:WaitForChild("HumanoidRootPart") -- ensure full load
-	protectCharacter(char)
-end)
