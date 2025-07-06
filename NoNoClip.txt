@@ -1,0 +1,18 @@
+-- disable the noclip defined in the original script
+if _G.Noclip ~= nil then
+    -- disconnect the Stepped connection
+    pcall(function() Noclip:Disconnect() end)
+end
+
+-- tell the old script we're now in "clip" mode
+Clip = true
+
+-- re‑enable collisions on all parts
+local char = game.Players.LocalPlayer.Character
+if char then
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = true
+        end
+    end
+end
