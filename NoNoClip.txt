@@ -1,18 +1,47 @@
--- disable the noclip defined in the original script
-if _G.Noclip ~= nil then
-    -- disconnect the Stepped connection
-    pcall(function() Noclip:Disconnect() end)
+--------------------------------------------------------------------
+--  Anti‑Noclip (client‑side)                                     --
+--------------------------------------------------------------------
+local Players        = game:GetService("Players")
+local player         = Players.LocalPlayer
+
+--------------------------------------------------------------------
+--  Helper: force a part to stay collidable                       --
+--------------------------------------------------------------------
+local function lockCollide(part)
+	if not part:IsA("BasePart") then return end
+
+	-- Set once now
+	part.CanCollide = true
+
+	-- Keep it that way
+	part:GetPropertyChangedSignal("CanCollide"):Connect(function()
+		if not part.CanCollide then
+			part.CanCollide = true
+		end
+	end)
 end
 
--- tell the old script we're now in "clip" mode
-Clip = true
+--------------------------------------------------------------------
+--  Apply lock to an entire character model                       --
+--------------------------------------------------------------------
+local function protectCharacter(char)
+	-- Existing parts
+	for _,p in ipairs(char:GetDescendants()) do
+		lockCollide(p)
+	end
 
--- re‑enable collisions on all parts
-local char = game.Players.LocalPlayer.Character
-if char then
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = true
-        end
-    end
+	-- Future parts (accessories/tools that appear later)
+	char.DescendantAdded:Connect(lockCollide)
 end
+
+--------------------------------------------------------------------
+--  Run for current character and every respawn                   --
+--------------------------------------------------------------------
+if player.Character then
+	protectCharacter(player.Character)
+end
+
+player.CharacterAdded:Connect(function(char)
+	char:WaitForChild("HumanoidRootPart") -- ensure full load
+	protectCharacter(char)
+end)
