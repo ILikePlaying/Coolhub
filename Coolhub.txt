@@ -55,23 +55,5 @@ local Toggle = Tab:CreateToggle({
    end,
 })
 
-local Slider = Tab:CreateSlider({
-   Name = "Walkspeed",
-   Range = {0, 150},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = 16,
-   Flag = "Slider1",
-   Callback = function(Value)
-      local player = game.Players.LocalPlayer
-      local character = player.Character or player.CharacterAdded:Wait()
-      local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-      if humanoid then
-         humanoid.WalkSpeed = Value
-      end
-   end,
-})
-
 
 
