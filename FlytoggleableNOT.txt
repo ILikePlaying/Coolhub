@@ -1,0 +1,9 @@
+local player = game.Players.LocalPlayer
+local gui = player:FindFirstChild("PlayerGui")
+
+if gui then
+    local flyGui = gui:FindFirstChild("FlyToggleGui")
+    if flyGui then
+        flyGui:Destroy()
+    end
+end
