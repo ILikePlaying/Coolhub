@@ -93,7 +93,7 @@ local Toggle = Tab:CreateToggle({
 })
 
 local Button = Tab:CreateButton({
-   Name = "Invisible",
+   Name = "Noclip",
    Callback = function()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Noclip.txt'))()
    end,
