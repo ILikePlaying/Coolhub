@@ -1,20 +1,21 @@
-local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
+local player = game.Players.LocalPlayer
+local playerGui = player:FindFirstChild("PlayerGui")
 
--- Remove the GUI
-local gui = CoreGui:FindFirstChild("Noclip")
-if gui then
-    gui:Destroy()
+-- Remove GUI
+if playerGui then
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") and gui:FindFirstChildOfClass("TextButton") and gui:FindFirstChildOfClass("TextButton").Text == "Noclip" then
+            gui:Destroy()
+        end
+    end
 end
 
 -- Restore collisions
-for _, player in pairs(Players:GetPlayers()) do
-    local character = player.Character
-    if character then
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
+local character = player.Character
+if character then
+    for _, part in pairs(character:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = true
         end
     end
 end
