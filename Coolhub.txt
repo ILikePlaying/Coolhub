@@ -63,16 +63,32 @@ loadstring(game:HttpGet('https://pastebin.com/raw/3Rnd9rHf'))()
 })
 
 local Toggle = Tab:CreateToggle({
-   Name = "Fly Toggle",
+   Name = "Fly toggle Toggle",
    CurrentValue = false,
    Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
 			if Value then
-         -- Turn ON inf jump
+         -- Turn ON
          loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/ToggleableFly.txt'))()
       else
-         -- Turn OFF inf jump
+         -- Turn OFF
          loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/FlytoggleableNOT.txt'))()
       end
    end,
 })
+
+local Toggle = Tab:CreateToggle({
+   Name = "Fly toggle Toggle",
+   CurrentValue = false,
+   Flag = "Toggle1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+			if Value then
+         -- Turn ON
+         loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/Nocliptoggleable.txt'))()
+      else
+         -- Turn OFF
+         loadstring(game:HttpGet('https://raw.githubusercontent.com/ILikePlaying/Coolhub/refs/heads/main/FlytoggleableNOT.txt'))()
+      end
+   end,
+})
+
