@@ -1,0 +1,53 @@
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
+local playerGui = player:FindFirstChild("PlayerGui")
+
+-- 1. Restore character to default movement state
+local function resetCharacterState()
+    local char = player.Character or player.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.PlatformStand = false
+        hum:SetStateEnabled(Enum.HumanoidStateType.Freefall, true)
+        hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, true)
+        hum.WalkSpeed = 16
+        hum.JumpPower = 50
+    end
+
+    for _, part in pairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = true
+            if part:FindFirstChildOfClass("BodyVelocity") then
+                part:FindFirstChildOfClass("BodyVelocity"):Destroy()
+            end
+            if part:FindFirstChildOfClass("BodyGyro") then
+                part:FindFirstChildOfClass("BodyGyro"):Destroy()
+            end
+        end
+    end
+end
+
+resetCharacterState()
+player.CharacterAdded:Connect(function()
+    task.wait(1)
+    resetCharacterState()
+end)
+
+-- 2. Remove all custom GUIs from PlayerGui
+if playerGui then
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") and not gui.Name:lower():match("chat") then
+            pcall(function() gui:Destroy() end)
+        end
+    end
+end
+
+-- 3. Remove all custom GUIs from CoreGui
+for _, gui in pairs(CoreGui:GetChildren()) do
+    if gui:IsA("ScreenGui") and not gui.Name:lower():match("devconsole") then
+        pcall(function() gui:Destroy() end)
+    end
+end
+
+warn("Character reset. All visible GUIs removed. Scripts may linger, but are now powerless.")
