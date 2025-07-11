@@ -9,8 +9,9 @@ local player = game.Players.LocalPlayer
 --------------------------------------------------------------------
 local gui            = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name             = "FlyToggleGui"
+gui.ResetOnSpawn     = false
 
-local btn            = Instance.new("TextButton", gui)
+local btn            = Instance.new("TextButton")
 btn.Position         = UDim2.new(0, 10, 0, 10)
 btn.Size             = UDim2.new(0, 90, 0, 38)
 btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
@@ -18,12 +19,17 @@ btn.TextColor3       = Color3.fromRGB(255,255,255)
 btn.TextScaled       = true
 btn.Text             = "Fly: OFF"
 btn.ZIndex           = 8
+btn.Parent           = gui
+
+-- ✅ Make the button movable
+btn.Active = true
+btn.Draggable = true
 
 --------------------------------------------------------------------
 --  internal state                                                --
 --------------------------------------------------------------------
 local flying   = false
-local bv, bg, rsConn             -- body movers & RenderStepped link
+local bv, bg, rsConn
 
 --------------------------------------------------------------------
 --  your ORIGINAL fly logic, wrapped in enable / disable          --
@@ -34,7 +40,6 @@ local function enableFly()
     local rootPart  = character:WaitForChild("HumanoidRootPart")
     local RunService = game:GetService("RunService")
 
-    -- === original setup ===
     humanoid.PlatformStand = true
     humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,     false)
     humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,  false)
@@ -50,8 +55,6 @@ local function enableFly()
     rsConn = RunService.RenderStepped:Connect(function()
         local moveDir = humanoid.MoveDirection
         local cam     = workspace.CurrentCamera
-
-        -- Fly direction: camera lookVector scaled by joystick magnitude
         local flyDirection = cam.CFrame.LookVector * moveDir.Magnitude
 
         if flyDirection.Magnitude > 0 then
